@@ -16,5 +16,6 @@ public class User
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
-    public virtual ICollection<CodeRequest> CodeRequests { get; set; } = new List<CodeRequest>();
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public virtual ICollection<ChatSession> ChatSessions { get; set; } = new List<ChatSession>();
 }

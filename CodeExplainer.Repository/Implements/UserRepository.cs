@@ -108,7 +108,7 @@ public class UserRepository : IUserRepository
         if (userInDb == null) return null;
 
         userInDb.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-        userInDb.UpdatedAt = DateTime.UtcNow;
+        userInDb.UpdatedAt = DateTime.Now;
         await _context.SaveChangesAsync();
         return userInDb;
     }

@@ -6,6 +6,8 @@ using CodeExplainer.Services.Implements;
 using CodeExplainer.Services.Interfaces;
 using CodeExplainer.Shared.Jwt;
 using dotenv.net;
+using MaIN.Core;
+using MaIN.Domain.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -46,6 +48,16 @@ public class Program
             }
         }
         
+        var openAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        if (string.IsNullOrWhiteSpace(openAiApiKey))
+        {
+            openAiApiKey = builder.Configuration["OpenAI:ApiKey"];
+            if (string.IsNullOrWhiteSpace(openAiApiKey))
+            {
+                throw new InvalidOperationException("OpenAI API key is not set in environment variables.");
+            }
+        }
+
         builder.Services.AddDbContext<ApplicationDbContext>(options
             => options.UseNpgsql(connectionString));
         
@@ -266,7 +278,20 @@ public class Program
             var connectionMultiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
             return connectionMultiplexer.GetDatabase();
         });
-
+        
+        MaINBootstrapper.Initialize(null, options =>
+        {
+            var backend = Environment.GetEnvironmentVariable("AI_BACKEND") ?? "Gemini";
+            options.BackendType = backend switch
+            {
+                "OpenAI" => BackendType.OpenAi,
+                "Claude" => BackendType.DeepSeek,
+                _ => BackendType.Gemini
+            };
+            //options.GeminiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
+            options.GeminiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        });
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

@@ -13,7 +13,7 @@ using StackExchange.Redis;
 
 namespace CodeExplainer.Services.Implements;
 
-public class AuthorizeServices
+public class AuthorizeServices : IAuthorizeServices
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuthTokenProcess _authTokenProcess;
@@ -57,8 +57,8 @@ public class AuthorizeServices
                 UserName = email.Split('@')[0],
                 EmailConfirmed = true,
                 ProfilePictureUrl = claimsPrincipal.FindFirst("picture")?.Value ?? string.Empty,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
             
             await _userRepository.CreateAsync(user);
@@ -98,8 +98,8 @@ public class AuthorizeServices
             UserName = request.UserName,
             Email = request.Email,
             EmailConfirmed = false,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         };
         
         await _userRepository.CreateAsync(user, request.Password);
@@ -149,6 +149,8 @@ public class AuthorizeServices
 
         return new LoginResponse
         {   
+            UserName = user.UserName,
+            Email = user.Email,
             RefreshToken = user.RefreshToken,
             RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
         };
