@@ -61,3 +61,6 @@ nunit-*.xml
 
 # Vísual Studio profiler
 .vs/
+
+# Environment variables files
+.env
