@@ -17,44 +17,62 @@ namespace CodeExplainer.BusinessObject.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.21")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.CodeRequest", b =>
+            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.ChatMessage", b =>
                 {
-                    b.Property<Guid>("CodeRequestId")
+                    b.Property<Guid>("ChatMessageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AIResponse")
+                    b.Property<Guid>("ChatSessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Language")
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PromptType")
+                    b.HasKey("ChatMessageId");
+
+                    b.HasIndex("ChatSessionId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.ChatSession", b =>
+                {
+                    b.Property<Guid>("ChatSessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("SourceCode")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("CodeRequestId");
+                    b.HasKey("ChatSessionId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CodeRequests");
+                    b.ToTable("ChatSessions");
                 });
 
             modelBuilder.Entity("CodeExplainer.BusinessObject.Models.Notification", b =>
@@ -140,10 +158,21 @@ namespace CodeExplainer.BusinessObject.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.CodeRequest", b =>
+            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.ChatMessage", b =>
+                {
+                    b.HasOne("CodeExplainer.BusinessObject.Models.ChatSession", "ChatSession")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatSession");
+                });
+
+            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.ChatSession", b =>
                 {
                     b.HasOne("CodeExplainer.BusinessObject.Models.User", "User")
-                        .WithMany("CodeRequests")
+                        .WithMany("ChatSessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -154,7 +183,7 @@ namespace CodeExplainer.BusinessObject.Migrations
             modelBuilder.Entity("CodeExplainer.BusinessObject.Models.Notification", b =>
                 {
                     b.HasOne("CodeExplainer.BusinessObject.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -162,9 +191,16 @@ namespace CodeExplainer.BusinessObject.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CodeExplainer.BusinessObject.Models.ChatSession", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("CodeExplainer.BusinessObject.Models.User", b =>
                 {
-                    b.Navigation("CodeRequests");
+                    b.Navigation("ChatSessions");
+
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

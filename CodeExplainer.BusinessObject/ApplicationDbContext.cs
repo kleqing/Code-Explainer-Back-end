@@ -10,8 +10,9 @@ public class ApplicationDbContext : DbContext
     }
     
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<CodeRequest> CodeRequests { get; set; } = null!;
     public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<ChatSession> ChatSessions { get; set; } = null!;
+    public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,29 +21,40 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasKey(x => x.UserId);
         
-        modelBuilder.Entity<CodeRequest>()
-            .HasKey(x => x.CodeRequestId);
-        
         modelBuilder.Entity<Notification>()
             .HasKey(x => x.NotificationId);
+        
+        modelBuilder.Entity<ChatSession>()
+            .HasKey(x => x.ChatSessionId);
+        
+        modelBuilder.Entity<ChatMessage>()
+            .HasKey(x => x.ChatMessageId);
         
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
         modelBuilder.Entity<User>().HasIndex(u => u.UserName).IsUnique();
         modelBuilder.Entity<User>().Property(d => d.CreatedAt).HasColumnType("timestamp without time zone");
         modelBuilder.Entity<User>().Property(d => d.UpdatedAt).HasColumnType("timestamp without time zone");
-        modelBuilder.Entity<CodeRequest>().Property(d => d.CreatedAt).HasColumnType("timestamp without time zone");
         modelBuilder.Entity<Notification>().Property(d => d.CreatedAt).HasColumnType("timestamp without time zone");
+        modelBuilder.Entity<ChatSession>().Property(x => x.CreatedAt).HasColumnType("timestamp without time zone");
+        modelBuilder.Entity<ChatSession>().Property(x => x.UpdatedAt).HasColumnType("timestamp without time zone");
+        modelBuilder.Entity<ChatMessage>().Property(x => x.CreatedAt).HasColumnType("timestamp without time zone");
         
         modelBuilder.Entity<User>()
-            .HasMany(u => u.CodeRequests)
-            .WithOne(cr => cr.User)
-            .HasForeignKey(cr => cr.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        modelBuilder.Entity<User>()
-            .HasMany<Notification>()
+            .HasMany(x => x.Notifications)
             .WithOne(n => n.User)
             .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<ChatSession>()
+            .HasOne(cs => cs.User)
+            .WithMany(x => x.ChatSessions)
+            .HasForeignKey(cs => cs.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<ChatMessage>()
+            .HasOne(cm => cm.ChatSession)
+            .WithMany(cs => cs.Messages)
+            .HasForeignKey(cm => cm.ChatSessionId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
