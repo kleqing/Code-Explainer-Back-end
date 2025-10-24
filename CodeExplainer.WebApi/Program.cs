@@ -5,6 +5,7 @@ using CodeExplainer.BusinessObject;
 using CodeExplainer.Services.Implements;
 using CodeExplainer.Services.Interfaces;
 using CodeExplainer.Shared.Jwt;
+using CodeExplainer.WebApi.Hubs;
 using dotenv.net;
 using MaIN.Core;
 using MaIN.Domain.Configuration;
@@ -291,6 +292,8 @@ public class Program
             //options.GeminiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             options.GeminiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         });
+
+        builder.Services.AddSignalR();
         
         var app = builder.Build();
 
@@ -334,6 +337,9 @@ public class Program
         app.UseAuthorization();
         
         app.MapControllers();
+
+        app.MapHub<ChatHub>("/hubs/chat");
+        app.MapHub<NotificationHub>("/hubs/notification");
 
         app.Run();
     }
