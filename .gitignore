@@ -64,3 +64,6 @@ nunit-*.xml
 
 # Environment variables files
 .env
+
+# DotSettings files
+*.DotSettings.user
