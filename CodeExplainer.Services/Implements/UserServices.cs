@@ -22,11 +22,14 @@ public class UserServices : IUserServices
     
     public async Task<UserUpdateProfileResponse?> UpdateUserAsync(UserProfileUpdateRequest request)
     {
-        var user = await _userRepository.FindByNameAsync(request.UserName);
+        var user = await _userRepository.FindByIdAsync(request.UserId.ToString());
         if (user != null)
         {
-            var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.PasswordHash);
-            if (request.ProfilePictureUrl != null || request.ProfilePictureUrl.Length > 0)
+            if (!string.IsNullOrEmpty(request.PasswordHash))
+            {
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.PasswordHash);
+            }
+            if (request.ProfilePictureUrl != null)
             {
                 var uploadUrl = await _uploader.UploadImage(request.ProfilePictureUrl);
                 if (!string.IsNullOrEmpty(uploadUrl))
@@ -37,7 +40,7 @@ public class UserServices : IUserServices
 
             user.UserName = request.UserName;
             user.Email = request.Email;
-            user.PasswordHash = hashPassword;
+            user.UpdatedAt = DateTime.Now;
             
             await _context.SaveChangesAsync();
             return new UserUpdateProfileResponse
