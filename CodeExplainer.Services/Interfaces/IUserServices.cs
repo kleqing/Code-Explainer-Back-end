@@ -6,5 +6,5 @@ namespace CodeExplainer.Services.Interfaces;
 
 public interface IUserServices
 {
-    Task<UserUpdateProfileResponse?> UpdateUserAsync(UserProfileUpdateRequest request)
+    Task<UserUpdateProfileResponse?> UpdateUserAsync(UserProfileUpdateRequest request);
 }
