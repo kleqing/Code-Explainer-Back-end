@@ -54,29 +54,6 @@ namespace CodeExplainer.BusinessObject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CodeRequests",
-                columns: table => new
-                {
-                    CodeRequestId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Language = table.Column<string>(type: "text", nullable: false),
-                    PromptType = table.Column<string>(type: "text", nullable: false),
-                    SourceCode = table.Column<string>(type: "text", nullable: false),
-                    AIResponse = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CodeRequests", x => x.CodeRequestId);
-                    table.ForeignKey(
-                        name: "FK_CodeRequests_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
@@ -130,11 +107,6 @@ namespace CodeExplainer.BusinessObject.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CodeRequests_UserId",
-                table: "CodeRequests",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
                 table: "Notifications",
                 column: "UserId");
@@ -157,9 +129,6 @@ namespace CodeExplainer.BusinessObject.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ChatMessages");
-
-            migrationBuilder.DropTable(
-                name: "CodeRequests");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
