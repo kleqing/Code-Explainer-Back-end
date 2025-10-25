@@ -5,6 +5,7 @@ using CodeExplainer.BusinessObject;
 using CodeExplainer.Services.Implements;
 using CodeExplainer.Services.Interfaces;
 using CodeExplainer.Shared.Jwt;
+using CodeExplainer.Shared.Utils;
 using CodeExplainer.WebApi.Hubs;
 using dotenv.net;
 using MaIN.Core;
@@ -116,6 +117,7 @@ public class Program
         }
         
         builder.Services.AddTransient<IEmailSender, EmailSender>();
+        builder.Services.AddTransient<CloudinaryUploader>();
         // Add services to the container.
 
         builder.Services.AddControllers()
