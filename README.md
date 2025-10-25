@@ -30,8 +30,8 @@ dotnet build
 
 - Create database from model (required dotnet ef core)
 ```bash
-dotnet ef migrations add "Initial" --project CodeExplainer.Infrastructure  --startup-project CodeExplainer.WebApi --context ApplicationDbContext
-dotnet ef database update --project CodeExplainer.Infrastructure  --startup-project CodeExplainer.WebApi --context ApplicationDbContext
+dotnet ef migrations add "Initial" --project CodeExplainer.BusinessObject  --startup-project CodeExplainer.WebApi --context ApplicationDbContext
+dotnet ef database update --project CodeExplainer.BusinessObject  --startup-project CodeExplainer.WebApi --context ApplicationDbContext
 ```
 
 *API Endpoint:* https://localhost:7077/swagger/index.html
