@@ -20,6 +20,9 @@ public class UserController : ControllerBase
     [HttpPost("update-profile")]
     public async Task<IActionResult> UpdateProfile([FromBody] UserProfileUpdateRequest request)
     {
+        var userId = Guid.Parse(User.FindFirst("UserId")!.Value);
+        request.UserId = userId;
+        
         var response = await _userService.UpdateUserAsync(request);
         if (response == null)
         {
